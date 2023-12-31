@@ -1,0 +1,383 @@
+
+
+
+import pandas as pd
+import numpy as np
+import scipy as sp
+import matplotlib.pyplot as plt
+#get_ipython().run_line_magic('matplotlib', 'inline')
+import seaborn as sns
+from sklearn.impute import SimpleImputer
+import joblib
+df=pd.read_csv("arrhythmia (1).csv",header=None)
+df.head()
+
+
+
+
+
+df.tail()
+
+
+
+
+
+df.shape
+
+
+
+
+
+df.info()
+
+
+
+
+
+df.describe().T
+
+
+
+
+
+pd.isnull(df).sum().sum()
+
+
+
+
+
+df = df.replace('?', np.NaN)
+
+
+
+
+
+nu=pd.isnull(df).sum().sum()
+nu
+
+
+
+
+
+pd.isnull(df).sum().plot()
+plt.xlabel('Columns')
+plt.ylabel('Total number of null value in each column')
+
+
+
+
+
+pd.isnull(df).sum()[7:17].plot(kind="bar")
+plt.xlabel('Columns')
+plt.ylabel('Total number of null value in each column')
+
+
+
+
+
+df.drop(columns = 13,inplace=True)
+
+
+
+
+
+new_df =df.copy()
+
+
+
+
+
+cols_with_missing = (col for col in new_df.columns if new_df[col].isnull().any())
+for col in cols_with_missing:
+    new_df[col] = new_df[col].isnull()
+
+
+
+
+
+my_imputer = SimpleImputer()
+new_df = pd.DataFrame(my_imputer.fit_transform(new_df))
+new_df.columns = df.columns
+
+
+
+
+
+new_df.head()
+
+
+
+
+
+pd.isnull(new_df).sum().sum()
+
+
+
+
+
+#Creating column names
+final_df_columns=["Age","Sex","Height","Weight","QRS_Dur",
+"P-R_Int","Q-T_Int","T_Int","P_Int","QRS","T","P","J","Heart_Rate",
+"Q_Wave","R_Wave","S_Wave","R'_Wave","S'_Wave","Int_Def","Rag_R_Nom",
+"Diph_R_Nom","Rag_P_Nom","Diph_P_Nom","Rag_T_Nom","Diph_T_Nom",
+"DII00", "DII01","DII02", "DII03", "DII04","DII05","DII06","DII07","DII08","DII09","DII10","DII11",
+"DIII00","DIII01","DIII02", "DIII03", "DIII04","DIII05","DIII06","DIII07","DIII08","DIII09","DIII10","DIII11",
+"AVR00","AVR01","AVR02","AVR03","AVR04","AVR05","AVR06","AVR07","AVR08","AVR09","AVR10","AVR11",
+"AVL00","AVL01","AVL02","AVL03","AVL04","AVL05","AVL06","AVL07","AVL08","AVL09","AVL10","AVL11",
+"AVF00","AVF01","AVF02","AVF03","AVF04","AVF05","AVF06","AVF07","AVF08","AVF09","AVF10","AVF11",
+"V100","V101","V102","V103","V104","V105","V106","V107","V108","V109","V110","V111",
+"V200","V201","V202","V203","V204","V205","V206","V207","V208","V209","V210","V211",
+"V300","V301","V302","V303","V304","V305","V306","V307","V308","V309","V310","V311",
+"V400","V401","V402","V403","V404","V405","V406","V407","V408","V409","V410","V411",
+"V500","V501","V502","V503","V504","V505","V506","V507","V508","V509","V510","V511",
+"V600","V601","V602","V603","V604","V605","V606","V607","V608","V609","V610","V611",
+"JJ_Wave","Amp_Q_Wave","Amp_R_Wave","Amp_S_Wave","R_Prime_Wave","S_Prime_Wave","P_Wave","T_Wave",
+"QRSA","QRSTA","DII170","DII171","DII172","DII173","DII174","DII175","DII176","DII177","DII178","DII179",
+"DIII180","DIII181","DIII182","DIII183","DIII184","DIII185","DIII186","DIII187","DIII188","DIII189",
+"AVR190","AVR191","AVR192","AVR193","AVR194","AVR195","AVR196","AVR197","AVR198","AVR199",
+"AVL200","AVL201","AVL202","AVL203","AVL204","AVL205","AVL206","AVL207","AVL208","AVL209",
+"AVF210","AVF211","AVF212","AVF213","AVF214","AVF215","AVF216","AVF217","AVF218","AVF219",
+"V1220","V1221","V1222","V1223","V1224","V1225","V1226","V1227","V1228","V1229",
+"V2230","V2231","V2232","V2233","V2234","V2235","V2236","V2237","V2238","V2239",
+"V3240","V3241","V3242","V3243","V3244","V3245","V3246","V3247","V3248","V3249",
+"V4250","V4251","V4252","V4253","V4254","V4255","V4256","V4257","V4258","V4259",
+"V5260","V5261","V5262","V5263","V5264","V5265","V5266","V5267","V5268","V5269",
+"V6270","V6271","V6272","V6273","V6274","V6275","V6276","V6277","V6278","V6279","class"]
+
+
+# In[ ]:
+
+
+new_df.columns=final_df_columns
+new_df.to_csv("new data with target class.csv")
+new_df.head()
+
+
+# As our dataframe is completely cleaned and preprocessed. we will remove the target attribute and store our final dataframe.
+
+# In[ ]:
+
+
+target=new_df["class"]
+
+final_df = new_df.drop(columns ="class")
+
+
+# In[ ]:
+
+
+final_df.shape
+
+
+# In[ ]:
+
+
+class_names = ["Normal",
+               "Ischemic changes (CAD)",
+               "Old Anterior Myocardial Infraction",
+               "Old Inferior Myocardial Infraction",
+               "Sinus tachycardy",
+               "Sinus bradycardy",
+               "Ventricular Premature Contraction (PVC)",
+               "Supraventricular Premature Contraction",
+               "Left Boundle branch block",
+               "Right boundle branch block",
+               "1.Degree AtrioVentricular block",
+               "2.Degree AV block",
+               "3.Degree AV block",
+               "Left Ventricule hypertrophy",
+               "Atrial Fibrillation or Flutter",
+               "Others"]
+
+
+# In[ ]:
+
+
+t=new_df.sort_values(by=["class"])
+
+
+# In[ ]:
+
+
+la = t["class"].value_counts(sort=False).tolist()
+la
+
+
+# In[ ]:
+
+
+sns.countplot(x ='class',data =new_df)
+plt.show()
+
+
+# Lets Count the total number of instances we have for each class.
+
+# In[ ]:
+
+
+values = la[0:10]
+values.extend([0,0,0])
+values.extend(la[10:13])
+print(values)
+
+
+# ## Feature Scaling and Splitting dataset
+# <br />
+# We will be using 80% of our dataset for training purpose and 20% for testing purpose.
+
+# In[ ]:
+
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(final_df, target ,test_size=0.2, random_state=1)
+
+
+# In[ ]:
+
+
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+
+scaler.fit(X_train)
+X_train = scaler.transform(X_train)
+X_test = scaler.transform(X_test)
+
+
+# In[ ]:
+
+
+from sklearn.metrics import accuracy_score,recall_score,confusion_matrix
+
+
+# # **3. Modeling**
+
+# In[ ]:
+
+
+result = pd.DataFrame(columns=['Model','Train Accuracy','Test Accuracy'])
+
+
+# ## KNN Classifier
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+
+# In[ ]:
+
+
+from sklearn import svm
+KSVC_clf = svm.SVC(kernel='sigmoid',C=10,gamma=0.001)
+KSVC_clf.fit(X_train, y_train)
+y_pred_train = KSVC_clf.predict(X_train)
+y_pred_test = KSVC_clf.predict(X_test)
+joblib.dump(KSVC_clf, 'model.pkl')
+model = joblib.load('C:/Users/MANDULA BANGARU BABU/Desktop/New folder/arrythmia_new/models/model.pkl')
+
+
+# In[ ]:
+
+
+ksvc_train_accuracy_score = accuracy_score(y_train, y_pred_train)
+ksvc_test_accuracy_score = accuracy_score(y_test, y_pred_test)
+
+result = pd.Series({'Model':'Kernelized SVC','Train Accuracy':ksvc_train_accuracy_score,'Test Accuracy':ksvc_test_accuracy_score})
+result
+
+from imblearn.over_sampling import RandomOverSampler
+ros = RandomOverSampler(random_state=2)
+X_resampled, y_resampled = ros.fit_resample(final_df, target)
+
+X_resampled.shape
+
+
+
+
+X_resampled, y_resampled = ros.fit_resample(final_df, target)
+
+
+
+
+
+X_resampled.shape
+
+
+
+
+
+X_train1, X_test1, y_train1, y_test1 = train_test_split(X_resampled, y_resampled , test_size=0.2, random_state=1)
+
+
+
+
+scaler = StandardScaler()
+scaler.fit(X_train1)
+X_train1 = scaler.transform(X_train1)
+X_test1 = scaler.transform(X_test1)
+
+
+
+
+
+from sklearn.decomposition import PCA
+pca = PCA(.98)
+pca.fit(X_train1)
+
+pca.n_components_
+
+
+
+
+
+X_train1 = pca.transform(X_train1)
+X_test1 = pca.transform(X_test1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from sklearn import svm
+
+KSVC_clf = svm.SVC(kernel='rbf',C=1,gamma=0.1)
+KSVC_clf.fit(X_train1, y_train1)
+y_pred_train1 = KSVC_clf.predict(X_train1)
+y_pred_test1 = KSVC_clf.predict(X_test1)
+
+
+
+
+
+ksvcp_train_accuracy_score = accuracy_score(y_train1, y_pred_train1)
+ksvcp_test_accuracy_score = accuracy_score(y_test1, y_pred_test1)
+result = pd.Series({'Model':'Kernelized SVM with PCA','Train Accuracy':ksvcp_train_accuracy_score,'Test Accuracy':ksvcp_test_accuracy_score})
+result
+
+
+
+
+
+
